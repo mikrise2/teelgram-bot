@@ -2,35 +2,41 @@ import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitDataCallbackQuery
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
+import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.*
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import dev.inmo.tgbotapi.extensions.utils.extensions.raw.data
+import dev.inmo.tgbotapi.requests.abstracts.Request
 import dev.inmo.tgbotapi.requests.send.SendTextMessage
 import dev.inmo.tgbotapi.types.IdChatIdentifier
 import dev.inmo.tgbotapi.types.chat.Chat
 import io.ktor.util.*
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.ConcurrentHashMap
 
 
 internal val users = ConcurrentHashMap<IdChatIdentifier, User>()
 
+suspend fun BehaviourContext.waitText(chat: Chat, request: Request<*>) =
+    waitTextMessage(request).filter { message -> message.chat == chat }.first().content.text
+
+
 suspend fun BehaviourContext.getLanguage(chat: Chat): Language {
-    var language = waitDataCallbackQuery(
+    var language = waitMessageCallbackQuery(
         SendTextMessage(
             chat.id,
             "Choose your language:",
             replyMarkup = chooseLanguageButtons()
         )
-    ).first().data
+    ).filter { it.message.chat == chat }.first().data ?: ""
     while (!checkLanguage(language)) {
-        language = waitDataCallbackQuery(
+        language = waitMessageCallbackQuery(
             SendTextMessage(
                 chat.id,
                 "Incorrect language, Please choose correct one:",
                 replyMarkup = chooseLanguageButtons()
             )
-        ).first().data
+        ).filter { it.message.chat == chat }.first().data ?: ""
     }
     return Language.valueOf(language.toUpperCasePreservingASCIIRules())
 }
@@ -42,9 +48,7 @@ suspend fun BehaviourContext.start() {
         val user = users[it.chat.id]!!
         user.language = language
         setMyCommands(getCommands(it.chat))
-        val preferredName = waitText(
-            getSendText(it.chat, "choose_name")
-        ).first().text
+        val preferredName = waitText(it.chat, getSendText(it.chat, "choose_name"))
         user.preferredName = preferredName
         sendMessageBundled(it.chat, "your_name_is", user.preferredName)
     }
@@ -69,9 +73,7 @@ suspend fun BehaviourContext.changeLanguage() {
 suspend fun BehaviourContext.changeName() {
     onCommand("change_name") {
         val user = createIfNotExist(it.chat)
-        val preferredName = waitText(
-            getSendText(it.chat, "choose_name")
-        ).first().text
+        val preferredName = waitText(it.chat, getSendText(it.chat, "choose_name"))
         user.preferredName = preferredName
         sendMessageBundled(it.chat, "your_name_is", user.preferredName)
     }
@@ -88,3 +90,4 @@ suspend fun main() {
         setMyCommands(getCommands(null))
     }.join()
 }
+

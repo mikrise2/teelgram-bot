@@ -2,10 +2,8 @@ import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import dev.inmo.tgbotapi.extensions.api.send.sendTextMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
-import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitText
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
 import dev.inmo.tgbotapi.types.chat.Chat
-import kotlinx.coroutines.flow.first
 import java.util.*
 
 private val translate: Translate = TranslateOptions.getDefaultInstance().service
@@ -17,9 +15,7 @@ suspend fun BehaviourContext.noLanguage(chat: Chat, language: String) {
 }
 
 suspend fun BehaviourContext.typeLanguage(chat: Chat, message: String): String? {
-    val language = waitText(
-        getSendText(chat, message)
-    ).first().text
+    val language = waitText(chat, getSendText(chat, message))
     val sourceLanguageCode: String? = getLanguageCodeOrNull(language)
     if (sourceLanguageCode == null) {
         noLanguage(chat, language)
@@ -33,7 +29,7 @@ suspend fun BehaviourContext.translate() {
             typeLanguage(it.chat, "source_language") ?: return@onCommand
         val targetLanguageCode: String =
             typeLanguage(it.chat, "target_language") ?: return@onCommand
-        val text = waitText(getSendText(it.chat, "to_translate")).first().text
+        val text = waitText(it.chat, getSendText(it.chat, "to_translate"))
         sendMessageBundled(it.chat, "translate")
         val translatedText = translate.translate(
             text,
