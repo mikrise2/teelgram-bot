@@ -70,15 +70,15 @@ fun getSendText(
 ): SendTextMessage {
     val user = createIfNotExist(chat)
     val bundle = ResourceBundle.getBundle("messages", user.language.locale)
-    return SendTextMessage(chat.id, bundle.getString(bundleKey).format(params))
+    return SendTextMessage(chat.id, bundle.getString(bundleKey).format(*params))
 }
 
-suspend fun BehaviourContext.sendMessage(
+suspend fun BehaviourContext.sendMessageBundled(
     chat: Chat,
     bundleKey: String,
     vararg params: String
 ) {
     val user = createIfNotExist(chat)
     val bundle = ResourceBundle.getBundle("messages", user.language.locale)
-    sendTextMessage(chat.id, bundle.getString(bundleKey).format(params))
+    sendTextMessage(chat.id, bundle.getString(bundleKey).format(*params))
 }

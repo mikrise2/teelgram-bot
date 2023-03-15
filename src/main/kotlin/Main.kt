@@ -1,6 +1,5 @@
 import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.setMyCommands
-import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.expectations.waitDataCallbackQuery
@@ -47,13 +46,13 @@ suspend fun BehaviourContext.start() {
             getSendText(it.chat, "chooseName")
         ).first().text
         user.preferredName = preferredName
-        sendMessage(it.chat, "yourNameIs", user.preferredName)
+        sendMessageBundled(it.chat, "yourNameIs", user.preferredName)
     }
 }
 
 suspend fun BehaviourContext.help() {
     onCommand("help") {
-        sendMessage(it.chat, "help")
+        sendMessageBundled(it.chat, "help")
     }
 }
 
@@ -63,7 +62,7 @@ suspend fun BehaviourContext.changeLanguage() {
         val language = getLanguage(it.chat)
         user.language = language
         setMyCommands(getCommands(it.chat))
-        sendMessage(it.chat, "languageChangedSuccessful")
+        sendMessageBundled(it.chat, "languageChangedSuccessful")
     }
 }
 
