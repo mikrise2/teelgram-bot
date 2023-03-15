@@ -43,10 +43,10 @@ suspend fun BehaviourContext.start() {
         user.language = language
         setMyCommands(getCommands(it.chat))
         val preferredName = waitText(
-            getSendText(it.chat, "chooseName")
+            getSendText(it.chat, "choose_name")
         ).first().text
         user.preferredName = preferredName
-        sendMessageBundled(it.chat, "yourNameIs", user.preferredName)
+        sendMessageBundled(it.chat, "your_name_is", user.preferredName)
     }
 }
 
@@ -62,7 +62,7 @@ suspend fun BehaviourContext.changeLanguage() {
         val language = getLanguage(it.chat)
         user.language = language
         setMyCommands(getCommands(it.chat))
-        sendMessageBundled(it.chat, "languageChangedSuccessful")
+        sendMessageBundled(it.chat, "language_changed_successful")
     }
 }
 
@@ -70,10 +70,10 @@ suspend fun BehaviourContext.changeName() {
     onCommand("change_name") {
         val user = createIfNotExist(it.chat)
         val preferredName = waitText(
-            getSendText(it.chat, "chooseName")
+            getSendText(it.chat, "choose_name")
         ).first().text
         user.preferredName = preferredName
-        sendMessageBundled(it.chat, "yourNameIs", user.preferredName)
+        sendMessageBundled(it.chat, "your_name_is", user.preferredName)
     }
 }
 
@@ -84,6 +84,7 @@ suspend fun main() {
         help()
         changeLanguage()
         changeName()
+        translate()
         setMyCommands(getCommands(null))
     }.join()
 }

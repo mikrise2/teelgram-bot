@@ -4,6 +4,7 @@ plugins {
 }
 
 val telegramBotApiVersion : String by project
+val cloudApiVersion : String by project
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
@@ -14,6 +15,8 @@ repositories {
 
 dependencies {
     implementation("dev.inmo:tgbotapi:$telegramBotApiVersion")
+    implementation(platform("com.google.cloud:libraries-bom:$cloudApiVersion"))
+    implementation("com.google.cloud:google-cloud-translate")
     testImplementation(kotlin("test"))
 }
 
