@@ -66,12 +66,24 @@ suspend fun BehaviourContext.changeLanguage() {
     }
 }
 
+suspend fun BehaviourContext.changeName() {
+    onCommand("change_name") {
+        val user = createIfNotExist(it.chat)
+        val preferredName = waitText(
+            getSendText(it.chat, "chooseName")
+        ).first().text
+        user.preferredName = preferredName
+        sendMessageBundled(it.chat, "yourNameIs", user.preferredName)
+    }
+}
+
 suspend fun main() {
     val bot = telegramBot(System.getenv("TOKEN"))
     bot.buildBehaviourWithLongPolling {
         start()
         help()
         changeLanguage()
+        changeName()
         setMyCommands(getCommands(null))
     }.join()
 }
