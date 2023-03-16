@@ -87,7 +87,10 @@ suspend fun main() {
         changeLanguage()
         changeName()
         translate()
-        setMyCommands(getCommands(null))
+        addFriend()
+        showFriends()
+        shareLocation()
+        updateTag()
     }.join()
 }
 
