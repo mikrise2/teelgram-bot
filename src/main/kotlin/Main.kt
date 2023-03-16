@@ -91,6 +91,7 @@ suspend fun main() {
         showFriends()
         shareLocation()
         updateTag()
+        javascript()
     }.join()
 }
 

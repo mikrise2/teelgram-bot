@@ -19,6 +19,7 @@ dependencies {
     implementation(platform("com.google.cloud:libraries-bom:$cloudApiVersion"))
     implementation("com.google.cloud:google-cloud-translate")
     implementation("com.google.maps:google-maps-services:$googleMapsApi")
+    implementation("com.beust:klaxon:5.5")
     testImplementation(kotlin("test"))
 }
 
