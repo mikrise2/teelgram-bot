@@ -22,7 +22,7 @@ suspend fun BehaviourContext.shareLocation() {
                 entry.key,
                 entry.value.language.locale,
                 "location_notification",
-                entry.value.preferredName,
+                user.preferredName,
                 getAddress(location.latitude, location.longitude)
             )
         }

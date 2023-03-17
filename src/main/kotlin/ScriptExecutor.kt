@@ -25,7 +25,7 @@ fun startScript(script: String): String? {
             "{\"clientId\": \"$clientId\",\"clientSecret\":\"$clientSecret\",\"script\":\"" + script.replace(
                 "\r",
                 ""
-            ).replace("\n", "\\n") +
+            ).replace("\n", "\\n").replace("\"","\\\"") +
                     "\",\"language\":\"" + language + "\",\"versionIndex\":\"" + versionIndex + "\"} "
         val outputStream = connection.outputStream
         outputStream.write(input.toByteArray())
